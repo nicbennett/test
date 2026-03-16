@@ -32,3 +32,10 @@ def test_free_tile_logic():
     board.pop(right)
     board[above] = t(4)
     assert not is_free_position(p, board)
+
+
+def test_higher_non_adjacent_layer_still_blocks():
+    lower = Position(0, 0, 0)
+    upper_gap = Position(0, 0, 2)
+    board = {lower: t(1), upper_gap: t(2)}
+    assert not is_free_position(lower, board)

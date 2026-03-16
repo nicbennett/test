@@ -36,7 +36,7 @@ def overlaps(a: Position, b: Position) -> bool:
 def covers(a: Position, b: Position) -> bool:
     """Tile at a (higher layer) covers b (lower layer)."""
 
-    return a.z == b.z + 1 and overlaps(a, b)
+    return a.z > b.z and overlaps(a, b)
 
 
 def blocks_left(p: Position, q: Position) -> bool:
@@ -83,20 +83,14 @@ def free_positions(tiles: Dict[Position, PlacedTile]) -> List[Position]:
 
 
 def brick_layout(width: int = 12, height: int = 8, layers: int = 3) -> Layout:
-    """Create a simple shrinking brick layout.
+    """Create a layered rectangular brick layout.
 
-    x advances by TILE_W, y by TILE_H, each higher layer shrinks and offsets inward.
+    Each layer is the same width/height and aligned on the same grid.
     """
 
     positions: Set[Position] = set()
     for z in range(layers):
-        w = width - 2 * z
-        h = height - 2 * z
-        if w <= 0 or h <= 0:
-            break
-        x_off = z
-        y_off = z
-        for iy in range(h):
-            for ix in range(w):
-                positions.add(Position((ix + x_off) * TILE_W, iy + y_off, z))
+        for iy in range(height):
+            for ix in range(width):
+                positions.add(Position(ix * TILE_W, iy, z))
     return Layout(name="brick", positions=positions)
